@@ -170,12 +170,11 @@ function getOpenAIResponse(prompt) {
     });
 }
 function getGoogleAIResponse(prompt) {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const result = yield googleModel.generateContent(prompt);
             const response = yield result.response;
-            const res = ((_a = response.text()) === null || _a === void 0 ? void 0 : _a.trim()) || "{}";
+            const res = response.text() || "{}";
             console.log("=================================================");
             console.log(res);
             // const res = response.choices[0].message?.content?.trim() || "{}";

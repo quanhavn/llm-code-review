@@ -165,7 +165,7 @@ async function getGoogleAIResponse(prompt: string): Promise<Array<{
 
   const result = await googleModel.generateContent(prompt);
   const response = await result.response;
-  const res = response.text()?.trim() || "{}";
+  const res = response.text() || "{}";
 
   console.log("=================================================");
   console.log(res);
