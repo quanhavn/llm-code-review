@@ -176,8 +176,10 @@ function getGoogleAIResponse(prompt) {
             const result = yield googleModel.generateContent(prompt);
             const response = yield result.response;
             const res = ((_a = response.text()) === null || _a === void 0 ? void 0 : _a.trim()) || "{}";
+            console.log("=================================================");
+            console.log(res);
             // const res = response.choices[0].message?.content?.trim() || "{}";
-            return JSON.parse(res).reviews;
+            return JSON.parse(res);
         }
         catch (error) {
             console.error("Error:", error);
