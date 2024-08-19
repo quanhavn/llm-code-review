@@ -60,7 +60,7 @@ const openai = new openai_1.default({
     apiKey: OPENAI_API_KEY,
 });
 const googlai = new generative_ai_1.GoogleGenerativeAI(GOOGLE_GENERATIVE_AI_API_KEY);
-const googleModel = googlai.getGenerativeModel({ model: GOOGLE_GENERATIVE_AI_MODEL });
+const googleModel = googlai.getGenerativeModel({ model: GOOGLE_GENERATIVE_AI_MODEL, generationConfig: { responseMimeType: "application/json" } });
 function getPRDetails() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {

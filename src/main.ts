@@ -21,7 +21,7 @@ const openai = new OpenAI({
 });
 
 const googlai = new GoogleGenerativeAI(GOOGLE_GENERATIVE_AI_API_KEY);
-const googleModel = googlai.getGenerativeModel({ model: GOOGLE_GENERATIVE_AI_MODEL});
+const googleModel = googlai.getGenerativeModel({ model: GOOGLE_GENERATIVE_AI_MODEL, generationConfig: { responseMimeType: "application/json" }});
 
 interface PRDetails {
   owner: string;
