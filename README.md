@@ -1,23 +1,27 @@
 # AI Code Reviewer
 
-AI Code Reviewer is a GitHub Action that leverages OpenAI's GPT-4 API to provide intelligent feedback and suggestions on
+AI Code Reviewer is a GitHub Action that leverages OpenAI's GPT-4 API or Google Gemini Pro to provide intelligent feedback and suggestions on
 your pull requests. This powerful tool helps improve code quality and saves developers time by automating the code
 review process.
 
 ## Features
 
-- Reviews pull requests using OpenAI's GPT-4 API.
+- Reviews pull requests using OpenAI's GPT-4 API or Google Gemini Pro.
 - Provides intelligent comments and suggestions for improving your code.
 - Filters out files that match specified exclude patterns.
 - Easy to set up and integrate into your GitHub workflow.
 
 ## Setup
 
-1. To use this GitHub Action, you need an OpenAI API key. If you don't have one, sign up for an API key
-   at [OpenAI](https://beta.openai.com/signup).
+1. To use this GitHub Action, you need
+1a. an OpenAI API key. If you don't have one, sign up for an API key at [OpenAI](https://beta.openai.com/signup).
+1b. an Google Gemnini API key. If you don't have one, sign up for an API key at [Gemini](https://ai.google.dev/gemini-api/docs/api-key).
 
-2. Add the OpenAI API key as a GitHub Secret in your repository with the name `OPENAI_API_KEY`. You can find more
-   information about GitHub Secrets [here](https://docs.github.com/en/actions/reference/encrypted-secrets).
+2. Add the OpenAI API key as a GitHub Secret in your repository
+- with the name `OPENAI_API_KEY` if use OpenAI.
+- with the name `GOOGLE_GENERATIVE_AI_API_KEY` if use Gemini
+
+    You can find more information about GitHub Secrets [here](https://docs.github.com/en/actions/reference/encrypted-secrets).
 
 3. Create a `.github/workflows/main.yml` file in your repository and add the following content:
 
@@ -45,11 +49,11 @@ jobs:
           GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
           GOOGLE_GENERATIVE_AI_MODEL: ${{ secrets.GOOGLE_GENERATIVE_AI_MODEL }}
           OPENAI_API_MODEL: ${{ secrets.OPENAI_API_MODEL }}
-          AI_VENDOR: ${{ secrets.AI_VENDOR }} # google or openai
+          AI_VENDOR: ${{ secrets.AI_VENDOR }} # Require google or openai
           exclude: "**/*.json, **/*.md" # Optional: exclude patterns separated by commas
 ```
 
-4. Replace `your-username` with your GitHub username or organization name where the AI Code Reviewer repository is
+4. Replace `tmi-quanha` with your GitHub username or organization name where the AI Code Reviewer repository is
    located.
 
 5. Customize the `exclude` input if you want to ignore certain file patterns from being reviewed.
@@ -67,7 +71,3 @@ Contributions are welcome! Please feel free to submit issues or pull requests to
 Action.
 
 Let the maintainer generate the final package (`yarn build` & `yarn package`).
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
