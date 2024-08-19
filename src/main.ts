@@ -167,10 +167,10 @@ async function getGoogleAIResponse(prompt: string): Promise<Array<{
   const response = await result.response;
   const res = response.text() || "{}";
 
-  console.log("=================================================");
+  console.log("==================Reviews:=======================");
   console.log(res);
+  console.log("=================================================");
 
-  // const res = response.choices[0].message?.content?.trim() || "{}";
   return JSON.parse(res).reviews;
 } catch (error) {
   console.error("Error:", error);
@@ -180,7 +180,6 @@ async function getGoogleAIResponse(prompt: string): Promise<Array<{
 }
 
 async function getAIResponse(prompt: string) {
-
   if (AI_VENDOR === "google") {
     return await getGoogleAIResponse(prompt);
   } else if (AI_VENDOR === "openai") {
@@ -214,17 +213,13 @@ async function createReviewComment(
   pull_number: number,
   comments: Array<{ body: string; path: string; line: number }>
 ): Promise<void> {
-  try {
-    await octokit.pulls.createReview({
-      owner,
-      repo,
-      pull_number,
-      comments,
-      event: "COMMENT",
-    });
-  } catch (error) {
-    console.error("Error:", error);
-  }
+  await octokit.pulls.createReview({
+    owner,
+    repo,
+    pull_number,
+    comments,
+    event: "COMMENT",
+  });
 }
 
 async function main() {
@@ -233,9 +228,6 @@ async function main() {
   const eventData = JSON.parse(
     readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8")
   );
-
-  console.log("------------------Event data:", eventData);
-
   if (eventData.action === "opened") {
     diff = await getDiff(
       prDetails.owner,

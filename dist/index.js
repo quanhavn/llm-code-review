@@ -175,9 +175,9 @@ function getGoogleAIResponse(prompt) {
             const result = yield googleModel.generateContent(prompt);
             const response = yield result.response;
             const res = response.text() || "{}";
-            console.log("=================================================");
+            console.log("==================Reviews:=======================");
             console.log(res);
-            // const res = response.choices[0].message?.content?.trim() || "{}";
+            console.log("=================================================");
             return JSON.parse(res).reviews;
         }
         catch (error) {
@@ -210,18 +210,13 @@ function createComment(file, chunk, aiResponses) {
 }
 function createReviewComment(owner, repo, pull_number, comments) {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield octokit.pulls.createReview({
-                owner,
-                repo,
-                pull_number,
-                comments,
-                event: "COMMENT",
-            });
-        }
-        catch (error) {
-            console.error("Error:", error);
-        }
+        yield octokit.pulls.createReview({
+            owner,
+            repo,
+            pull_number,
+            comments,
+            event: "COMMENT",
+        });
     });
 }
 function main() {
@@ -230,7 +225,6 @@ function main() {
         const prDetails = yield getPRDetails();
         let diff;
         const eventData = JSON.parse((0, fs_1.readFileSync)((_a = process.env.GITHUB_EVENT_PATH) !== null && _a !== void 0 ? _a : "", "utf8"));
-        console.log("------------------Event data:", eventData);
         if (eventData.action === "opened") {
             diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
         }
