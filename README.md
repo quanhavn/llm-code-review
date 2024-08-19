@@ -14,8 +14,8 @@ review process.
 ## Setup
 
 1. To use this GitHub Action, you need
-1a. an OpenAI API key. If you don't have one, sign up for an API key at [OpenAI](https://beta.openai.com/signup).
-1b. an Google Gemnini API key. If you don't have one, sign up for an API key at [Gemini](https://ai.google.dev/gemini-api/docs/api-key).
+- an OpenAI API key. If you don't have one, sign up for an API key at [OpenAI](https://beta.openai.com/signup).
+- an Google Gemnini API key. If you don't have one, sign up for an API key at [Gemini](https://ai.google.dev/gemini-api/docs/api-key).
 
 2. Add the OpenAI API key as a GitHub Secret in your repository
 - with the name `OPENAI_API_KEY` if use OpenAI.
