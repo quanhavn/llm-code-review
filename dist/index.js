@@ -178,7 +178,7 @@ function getGoogleAIResponse(prompt) {
             console.log("=================================================");
             console.log(res);
             // const res = response.choices[0].message?.content?.trim() || "{}";
-            return JSON.parse(res);
+            return JSON.parse(res).reviews;
         }
         catch (error) {
             console.error("Error:", error);

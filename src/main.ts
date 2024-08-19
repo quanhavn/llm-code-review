@@ -171,7 +171,7 @@ async function getGoogleAIResponse(prompt: string): Promise<Array<{
   console.log(res);
 
   // const res = response.choices[0].message?.content?.trim() || "{}";
-  return JSON.parse(res);
+  return JSON.parse(res).reviews;
 } catch (error) {
   console.error("Error:", error);
   return null;
