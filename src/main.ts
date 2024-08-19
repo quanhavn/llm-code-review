@@ -214,13 +214,24 @@ async function createReviewComment(
   pull_number: number,
   comments: Array<{ body: string; path: string; line: number }>
 ): Promise<void> {
-  await octokit.pulls.createReview({
-    owner,
-    repo,
-    pull_number,
-    comments,
-    event: "COMMENT",
-  });
+  try {
+    await octokit.pulls.createReview({
+      owner,
+      repo,
+      pull_number,
+      body: "AI Code Review",
+      event: "APPROVE",
+    });
+  } catch (error) {
+    console.error("Error:", error);
+  }
+  // await octokit.pulls.createReview({
+  //   owner,
+  //   repo,
+  //   pull_number,
+  //   comments,
+  //   event: "COMMENT",
+  // });
 }
 
 async function main() {
@@ -251,6 +262,7 @@ async function main() {
     });
 
     diff = String(response.data);
+    console.log("Diff:", diff);
   } else {
     console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
     return;
