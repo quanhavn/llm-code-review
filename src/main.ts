@@ -167,10 +167,11 @@ async function getGoogleAIResponse(prompt: string): Promise<Array<{
   const response = await result.response;
   const res = response.text()?.trim() || "{}";
 
+  console.log("=================================================");
   console.log(res);
 
   // const res = response.choices[0].message?.content?.trim() || "{}";
-  return JSON.parse(res).reviews;
+  return JSON.parse(res);
 } catch (error) {
   console.error("Error:", error);
   return null;
