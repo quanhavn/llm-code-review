@@ -1,6 +1,6 @@
-# AI Code Reviewer
+# LLM Code Reviewer
 
-AI Code Reviewer is a GitHub Action that leverages OpenAI's GPT-4 API or Google Gemini Pro to provide intelligent feedback and suggestions on
+LLM Code Reviewer is a GitHub Action that leverages OpenAI's GPT-4 API or Google Gemini Pro to provide intelligent feedback and suggestions on
 your pull requests. This powerful tool helps improve code quality and saves developers time by automating the code
 review process.
 
@@ -69,5 +69,6 @@ the OpenAI API. It then generates review comments based on the AI's response and
 
 Contributions are welcome! Please feel free to submit issues or pull requests to improve the AI Code Reviewer GitHub
 Action.
+
 
 Let the maintainer generate the final package (`yarn build` & `yarn package`).
