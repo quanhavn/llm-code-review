@@ -215,20 +215,13 @@ function createReviewComment(owner, repo, pull_number, comments) {
                 owner,
                 repo,
                 pull_number,
-                body: "AI Code Review",
-                event: "APPROVE",
+                comments,
+                event: "COMMENT",
             });
         }
         catch (error) {
             console.error("Error:", error);
         }
-        // await octokit.pulls.createReview({
-        //   owner,
-        //   repo,
-        //   pull_number,
-        //   comments,
-        //   event: "COMMENT",
-        // });
     });
 }
 function main() {
@@ -237,6 +230,7 @@ function main() {
         const prDetails = yield getPRDetails();
         let diff;
         const eventData = JSON.parse((0, fs_1.readFileSync)((_a = process.env.GITHUB_EVENT_PATH) !== null && _a !== void 0 ? _a : "", "utf8"));
+        console.log("------------------Event data:", eventData);
         if (eventData.action === "opened") {
             diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
         }

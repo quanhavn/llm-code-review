@@ -219,19 +219,12 @@ async function createReviewComment(
       owner,
       repo,
       pull_number,
-      body: "AI Code Review",
-      event: "APPROVE",
+      comments,
+      event: "COMMENT",
     });
   } catch (error) {
     console.error("Error:", error);
   }
-  // await octokit.pulls.createReview({
-  //   owner,
-  //   repo,
-  //   pull_number,
-  //   comments,
-  //   event: "COMMENT",
-  // });
 }
 
 async function main() {
@@ -240,6 +233,8 @@ async function main() {
   const eventData = JSON.parse(
     readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8")
   );
+
+  console.log("------------------Event data:", eventData);
 
   if (eventData.action === "opened") {
     diff = await getDiff(
