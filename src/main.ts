@@ -243,7 +243,7 @@ async function main() {
       prDetails.pull_number
     );
   } else if (eventData.action === "synchronize") {
-    const newBaseSha = eventData.before;
+    const newBaseSha = eventData.pull_request.base.sha;
     const newHeadSha = eventData.after;
 
     const response = await octokit.repos.compareCommits({
