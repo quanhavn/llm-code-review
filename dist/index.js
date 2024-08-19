@@ -210,13 +210,25 @@ function createComment(file, chunk, aiResponses) {
 }
 function createReviewComment(owner, repo, pull_number, comments) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield octokit.pulls.createReview({
-            owner,
-            repo,
-            pull_number,
-            comments,
-            event: "COMMENT",
-        });
+        try {
+            yield octokit.pulls.createReview({
+                owner,
+                repo,
+                pull_number,
+                body: "AI Code Review",
+                event: "APPROVE",
+            });
+        }
+        catch (error) {
+            console.error("Error:", error);
+        }
+        // await octokit.pulls.createReview({
+        //   owner,
+        //   repo,
+        //   pull_number,
+        //   comments,
+        //   event: "COMMENT",
+        // });
     });
 }
 function main() {
@@ -241,6 +253,7 @@ function main() {
                 head: newHeadSha,
             });
             diff = String(response.data);
+            console.log("Diff:", diff);
         }
         else {
             console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
