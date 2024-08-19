@@ -24,6 +24,11 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
+"@google/generative-ai@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@google/generative-ai/-/generative-ai-0.17.0.tgz#8a3d360e60b308a2fd1ae139529d6308aa95d32d"
+  integrity sha512-HNIrX4x6EY5UPOTTDC5DepBFVluognTXR0MTWLiSVsJmzqdEYxGtz/9NWIknUbPNnPZOu7N1BoA/Ho24aPUh3g==
+
 "@jridgewell/resolve-uri@^3.0.3":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@jridgewell/resolve-uri/-/resolve-uri-3.1.0.tgz#2203b118c157721addfe69d47b70465463066d78"

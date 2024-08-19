@@ -4,16 +4,24 @@ import OpenAI from "openai";
 import { Octokit } from "@octokit/rest";
 import parseDiff, { Chunk, File } from "parse-diff";
 import minimatch from "minimatch";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 
 const GITHUB_TOKEN: string = core.getInput("GITHUB_TOKEN");
 const OPENAI_API_KEY: string = core.getInput("OPENAI_API_KEY");
 const OPENAI_API_MODEL: string = core.getInput("OPENAI_API_MODEL");
+const GOOGLE_GENERATIVE_AI_API_KEY: string = core.getInput("GOOGLE_GENERATIVE_AI_API_KEY");
+const GOOGLE_GENERATIVE_AI_MODEL: string = core.getInput("GOOGLE_GENERATIVE_AI_MODEL");
+const AI_VENDOR: string = core.getInput("AI_VENDOR");
 
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
 const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
 });
+
+const googlai = new GoogleGenerativeAI(GOOGLE_GENERATIVE_AI_API_KEY);
+const googleModel = googlai.getGenerativeModel({ model: GOOGLE_GENERATIVE_AI_MODEL});
 
 interface PRDetails {
   owner: string;
@@ -90,7 +98,7 @@ function createPrompt(file: File, chunk: Chunk, prDetails: PRDetails): string {
 Review the following code diff in the file "${
     file.to
   }" and take the pull request title and description into account when writing the response.
-  
+
 Pull request title: ${prDetails.title}
 Pull request description:
 
@@ -110,10 +118,11 @@ ${chunk.changes
 `;
 }
 
-async function getAIResponse(prompt: string): Promise<Array<{
+async function getOpenAIResponse(prompt: string): Promise<Array<{
   lineNumber: string;
   reviewComment: string;
 }> | null> {
+
   const queryConfig = {
     model: OPENAI_API_MODEL,
     temperature: 0.2,
@@ -143,6 +152,36 @@ async function getAIResponse(prompt: string): Promise<Array<{
   } catch (error) {
     console.error("Error:", error);
     return null;
+  }
+
+}
+
+async function getGoogleAIResponse(prompt: string): Promise<Array<{
+  lineNumber: string;
+  reviewComment: string;
+}> | null> {
+
+  try {
+
+  const result = await googleModel.generateContent(prompt);
+  const response = await result.response;
+  const res = response.text()?.trim() || "{}";
+
+  // const res = response.choices[0].message?.content?.trim() || "{}";
+  return JSON.parse(res).reviews;
+} catch (error) {
+  console.error("Error:", error);
+  return null;
+}
+
+}
+
+async function getAIResponse(prompt: string) {
+
+  if (AI_VENDOR === "google") {
+    return await getGoogleAIResponse(prompt);
+  } else if (AI_VENDOR === "openai") {
+    return await getOpenAIResponse(prompt);
   }
 }
 

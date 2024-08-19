@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
+    "@google/generative-ai": "^0.17.0",
     "@octokit/rest": "^19.0.7",
     "minimatch": "^7.4.2",
     "openai": "^4.20.1",

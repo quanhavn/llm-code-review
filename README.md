@@ -42,7 +42,10 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # The GITHUB_TOKEN is there by default so you just need to keep it like it is and not necessarily need to add it as secret as it will throw an error. [More Details](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret)
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_API_MODEL: "gpt-4" # Optional: defaults to "gpt-4"
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_MODEL: ${{ secrets.GOOGLE_GENERATIVE_AI_MODEL }}
+          OPENAI_API_MODEL: ${{ secrets.OPENAI_API_MODEL }}
+          AI_VENDOR: ${{ secrets.AI_VENDOR }} # google or openai
           exclude: "**/*.json, **/*.md" # Optional: exclude patterns separated by commas
 ```
 
