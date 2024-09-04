@@ -91,7 +91,9 @@ function getDiff(owner, repo, pull_number) {
         return response.data;
     });
 }
-function analyzeCode(parsedDiff, prDetails) {
+function analyzeCode(parsedDiff, prDetails
+// ): Promise<Array<{ body: string; path: string; line: number }>> {
+) {
     return __awaiter(this, void 0, void 0, function* () {
         const comments = [];
         for (const file of parsedDiff) {
@@ -107,14 +109,15 @@ function analyzeCode(parsedDiff, prDetails) {
                 //   continue;
                 if (aiResponse) {
                     const newComments = createComment(file, chunk, aiResponse);
-                    if (newComments) {
-                        comments.push(...newComments);
+                    if (newComments.length > 0) {
+                        yield createReviewComment(prDetails.owner, prDetails.repo, prDetails.pull_number, newComments);
+                        // comments.push(...newComments);
                     }
                 }
                 // await new Promise((resolve) => setTimeout(resolve, 5000)); // Sleep for 5 seconds
             }
         }
-        return comments;
+        // return comments;
     });
 }
 function createPrompt(file, chunk, prDetails) {
@@ -216,13 +219,18 @@ function createComment(file, chunk, aiResponses) {
 }
 function createReviewComment(owner, repo, pull_number, comments) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield octokit.pulls.createReview({
-            owner,
-            repo,
-            pull_number,
-            comments,
-            event: "COMMENT",
-        });
+        try {
+            yield octokit.pulls.createReview({
+                owner,
+                repo,
+                pull_number,
+                comments,
+                event: "COMMENT",
+            });
+        }
+        catch (error) {
+            console.error("Error:", error);
+        }
     });
 }
 function main() {
@@ -231,26 +239,28 @@ function main() {
         const prDetails = yield getPRDetails();
         let diff;
         const eventData = JSON.parse((0, fs_1.readFileSync)((_a = process.env.GITHUB_EVENT_PATH) !== null && _a !== void 0 ? _a : "", "utf8"));
-        // if (eventData.action === "opened") {
-        diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
-        // } else if (eventData.action === "synchronize") {
-        //   const newBaseSha = eventData.pull_request.base.sha;
-        //   const newHeadSha = eventData.after;
-        //   const response = await octokit.repos.compareCommits({
-        //     headers: {
-        //       accept: "application/vnd.github.v3.diff",
-        //     },
-        //     owner: prDetails.owner,
-        //     repo: prDetails.repo,
-        //     base: newBaseSha,
-        //     head: newHeadSha,
-        //   });
-        //   diff = String(response.data);
-        console.log("Diff:", diff);
-        // } else {
-        //   console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
-        //   return;
-        // }
+        if (eventData.action === "opened") {
+            diff = yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
+        }
+        else if (eventData.action === "synchronize") {
+            const newBaseSha = eventData.pull_request.base.sha;
+            const newHeadSha = eventData.after;
+            const response = yield octokit.repos.compareCommits({
+                headers: {
+                    accept: "application/vnd.github.v3.diff",
+                },
+                owner: prDetails.owner,
+                repo: prDetails.repo,
+                base: newBaseSha,
+                head: newHeadSha,
+            });
+            diff = String(response.data);
+            console.log("Diff:", diff);
+        }
+        else {
+            console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
+            return;
+        }
         if (!diff) {
             console.log("No diff found");
             return;
@@ -263,10 +273,7 @@ function main() {
         const filteredDiff = parsedDiff.filter((file) => {
             return !excludePatterns.some((pattern) => { var _a; return (0, minimatch_1.default)((_a = file.to) !== null && _a !== void 0 ? _a : "", pattern); });
         });
-        const comments = yield analyzeCode(filteredDiff, prDetails);
-        if (comments.length > 0) {
-            yield createReviewComment(prDetails.owner, prDetails.repo, prDetails.pull_number, comments);
-        }
+        yield analyzeCode(filteredDiff, prDetails);
     });
 }
 main().catch((error) => {

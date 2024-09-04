@@ -67,7 +67,8 @@ async function getDiff(
 async function analyzeCode(
   parsedDiff: File[],
   prDetails: PRDetails
-): Promise<Array<{ body: string; path: string; line: number }>> {
+// ): Promise<Array<{ body: string; path: string; line: number }>> {
+): Promise<void> {
   const comments: Array<{ body: string; path: string; line: number }> = [];
 
   for (const file of parsedDiff) {
@@ -84,14 +85,20 @@ async function analyzeCode(
 
       if (aiResponse) {
         const newComments = createComment(file, chunk, aiResponse);
-        if (newComments) {
-          comments.push(...newComments);
+        if (newComments.length > 0) {
+          await createReviewComment(
+            prDetails.owner,
+            prDetails.repo,
+            prDetails.pull_number,
+            newComments
+          );
+          // comments.push(...newComments);
         }
       }
       // await new Promise((resolve) => setTimeout(resolve, 5000)); // Sleep for 5 seconds
     }
   }
-  return comments;
+  // return comments;
 }
 
 function createPrompt(file: File, chunk: Chunk, prDetails: PRDetails): string {
@@ -221,13 +228,18 @@ async function createReviewComment(
   pull_number: number,
   comments: Array<{ body: string; path: string; line: number }>
 ): Promise<void> {
-  await octokit.pulls.createReview({
-    owner,
-    repo,
-    pull_number,
-    comments,
-    event: "COMMENT",
-  });
+  try {
+    await octokit.pulls.createReview({
+      owner,
+      repo,
+      pull_number,
+      comments,
+      event: "COMMENT",
+    });
+  }
+  catch (error) {
+    console.error("Error:", error);
+  }
 }
 
 async function main() {
@@ -236,32 +248,32 @@ async function main() {
   const eventData = JSON.parse(
     readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8")
   );
-  // if (eventData.action === "opened") {
+  if (eventData.action === "opened") {
     diff = await getDiff(
       prDetails.owner,
       prDetails.repo,
       prDetails.pull_number
     );
-  // } else if (eventData.action === "synchronize") {
-  //   const newBaseSha = eventData.pull_request.base.sha;
-  //   const newHeadSha = eventData.after;
+  } else if (eventData.action === "synchronize") {
+    const newBaseSha = eventData.pull_request.base.sha;
+    const newHeadSha = eventData.after;
 
-  //   const response = await octokit.repos.compareCommits({
-  //     headers: {
-  //       accept: "application/vnd.github.v3.diff",
-  //     },
-  //     owner: prDetails.owner,
-  //     repo: prDetails.repo,
-  //     base: newBaseSha,
-  //     head: newHeadSha,
-  //   });
+    const response = await octokit.repos.compareCommits({
+      headers: {
+        accept: "application/vnd.github.v3.diff",
+      },
+      owner: prDetails.owner,
+      repo: prDetails.repo,
+      base: newBaseSha,
+      head: newHeadSha,
+    });
 
-  //   diff = String(response.data);
+    diff = String(response.data);
     console.log("Diff:", diff);
-  // } else {
-  //   console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
-  //   return;
-  // }
+  } else {
+    console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
+    return;
+  }
 
   if (!diff) {
     console.log("No diff found");
@@ -281,15 +293,18 @@ async function main() {
     );
   });
 
-  const comments = await analyzeCode(filteredDiff, prDetails);
-  if (comments.length > 0) {
-    await createReviewComment(
-      prDetails.owner,
-      prDetails.repo,
-      prDetails.pull_number,
-      comments
-    );
-  }
+  await analyzeCode(filteredDiff, prDetails);
+
+  // const comments = await analyzeCode(filteredDiff, prDetails);
+  // if (comments.length > 0) {
+
+  //   await createReviewComment(
+  //     prDetails.owner,
+  //     prDetails.repo,
+  //     prDetails.pull_number,
+  //     comments
+  //   );
+  // }
 }
 
 main().catch((error) => {
