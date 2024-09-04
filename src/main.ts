@@ -75,12 +75,20 @@ async function analyzeCode(
     for (const chunk of file.chunks) {
       const prompt = createPrompt(file, chunk, prDetails);
       const aiResponse = await getAIResponse(prompt);
+      // handle the case where the AI response is 429
+      // if (aiResponse === null) {
+      //   console.log("AI response is 429. Retrying in 1 minutes...");
+      //   await new Promise((resolve) => setTimeout(resolve, 65000)); // Sleep for 1 minutes
+      //   continue;
+
+
       if (aiResponse) {
         const newComments = createComment(file, chunk, aiResponse);
         if (newComments) {
           comments.push(...newComments);
         }
       }
+      // await new Promise((resolve) => setTimeout(resolve, 5000)); // Sleep for 5 seconds
     }
   }
   return comments;
@@ -228,32 +236,32 @@ async function main() {
   const eventData = JSON.parse(
     readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8")
   );
-  if (eventData.action === "opened") {
+  // if (eventData.action === "opened") {
     diff = await getDiff(
       prDetails.owner,
       prDetails.repo,
       prDetails.pull_number
     );
-  } else if (eventData.action === "synchronize") {
-    const newBaseSha = eventData.pull_request.base.sha;
-    const newHeadSha = eventData.after;
+  // } else if (eventData.action === "synchronize") {
+  //   const newBaseSha = eventData.pull_request.base.sha;
+  //   const newHeadSha = eventData.after;
 
-    const response = await octokit.repos.compareCommits({
-      headers: {
-        accept: "application/vnd.github.v3.diff",
-      },
-      owner: prDetails.owner,
-      repo: prDetails.repo,
-      base: newBaseSha,
-      head: newHeadSha,
-    });
+  //   const response = await octokit.repos.compareCommits({
+  //     headers: {
+  //       accept: "application/vnd.github.v3.diff",
+  //     },
+  //     owner: prDetails.owner,
+  //     repo: prDetails.repo,
+  //     base: newBaseSha,
+  //     head: newHeadSha,
+  //   });
 
-    diff = String(response.data);
+  //   diff = String(response.data);
     console.log("Diff:", diff);
-  } else {
-    console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
-    return;
-  }
+  // } else {
+  //   console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
+  //   return;
+  // }
 
   if (!diff) {
     console.log("No diff found");
