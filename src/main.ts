@@ -11,7 +11,7 @@ const GITHUB_TOKEN: string = core.getInput("GITHUB_TOKEN");
 const OPENAI_API_KEY: string = core.getInput("OPENAI_API_KEY");
 const OPENAI_API_MODEL: string = core.getInput("OPENAI_API_MODEL");
 const GOOGLE_GENERATIVE_AI_API_KEY: string = core.getInput("GOOGLE_GENERATIVE_AI_API_KEY");
-const GOOGLE_GENERATIVE_AI_MODEL: string = core.getInput("GOOGLE_GENERATIVE_AI_MODEL");
+const GOOGLE_GENERATIVE_AI_MODEL: string = core.getInput("GOOGLE_GENERATIVE_AI_MODEL") || "gemini-1.5-flash";
 const AI_VENDOR: string = core.getInput("AI_VENDOR");
 
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
