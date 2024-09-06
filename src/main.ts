@@ -72,6 +72,7 @@ async function analyzeCode(
   const comments: Array<{ body: string; path: string; line: number }> = [];
 
   for (const file of parsedDiff) {
+    console.log("File:", file);
     if (file.to === "/dev/null") continue; // Ignore deleted files
     for (const chunk of file.chunks) {
       const prompt = createPrompt(file, chunk, prDetails);
@@ -296,6 +297,8 @@ async function main() {
       minimatch(file.to ?? "", pattern)
     );
   });
+
+  console.log("Filtered Diff:", filteredDiff);
 
   await analyzeCode(filteredDiff, prDetails);
 

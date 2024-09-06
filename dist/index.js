@@ -97,6 +97,7 @@ function analyzeCode(parsedDiff, prDetails
     return __awaiter(this, void 0, void 0, function* () {
         const comments = [];
         for (const file of parsedDiff) {
+            console.log("File:", file);
             if (file.to === "/dev/null")
                 continue; // Ignore deleted files
             for (const chunk of file.chunks) {
@@ -275,6 +276,7 @@ function main() {
         const filteredDiff = parsedDiff.filter((file) => {
             return !excludePatterns.some((pattern) => { var _a; return (0, minimatch_1.default)((_a = file.to) !== null && _a !== void 0 ? _a : "", pattern); });
         });
+        console.log("Filtered Diff:", filteredDiff);
         yield analyzeCode(filteredDiff, prDetails);
     });
 }
