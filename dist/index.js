@@ -55,6 +55,12 @@ const OPENAI_API_MODEL = core.getInput("OPENAI_API_MODEL");
 const GOOGLE_GENERATIVE_AI_API_KEY = core.getInput("GOOGLE_GENERATIVE_AI_API_KEY");
 const GOOGLE_GENERATIVE_AI_MODEL = core.getInput("GOOGLE_GENERATIVE_AI_MODEL") || "gemini-1.5-flash";
 const AI_VENDOR = core.getInput("AI_VENDOR");
+console.log("GITHUB_TOKEN:", GITHUB_TOKEN);
+console.log("OPENAI_API_KEY:", OPENAI_API_KEY);
+console.log("OPENAI_API_MODEL:", OPENAI_API_MODEL);
+console.log("GOOGLE_GENERATIVE_AI_API_KEY:", GOOGLE_GENERATIVE_AI_API_KEY);
+console.log("GOOGLE_GENERATIVE_AI_MODEL:", GOOGLE_GENERATIVE_AI_MODEL);
+console.log("AI_VENDOR:", AI_VENDOR);
 const octokit = new rest_1.Octokit({ auth: GITHUB_TOKEN });
 const openai = new openai_1.default({
     apiKey: OPENAI_API_KEY,
