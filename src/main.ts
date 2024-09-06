@@ -284,6 +284,8 @@ async function main() {
 
   const parsedDiff = parseDiff(diff);
 
+  console.log("Parsed Diff:", parsedDiff);
+
   const excludePatterns = core
     .getInput("exclude")
     .split(",")

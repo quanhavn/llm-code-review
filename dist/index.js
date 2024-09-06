@@ -267,6 +267,7 @@ function main() {
             return;
         }
         const parsedDiff = (0, parse_diff_1.default)(diff);
+        console.log("Parsed Diff:", parsedDiff);
         const excludePatterns = core
             .getInput("exclude")
             .split(",")
