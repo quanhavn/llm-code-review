@@ -55,6 +55,7 @@ const OPENAI_API_MODEL = core.getInput("OPENAI_API_MODEL");
 const GOOGLE_GENERATIVE_AI_API_KEY = core.getInput("GOOGLE_GENERATIVE_AI_API_KEY");
 const GOOGLE_GENERATIVE_AI_MODEL = core.getInput("GOOGLE_GENERATIVE_AI_MODEL") || "gemini-1.5-flash";
 const AI_VENDOR = core.getInput("AI_VENDOR");
+const REVIEW_ENABLED = core.getInput("REVIEW_ENABLED") || "false";
 console.log("GITHUB_TOKEN:", GITHUB_TOKEN);
 console.log("OPENAI_API_KEY:", OPENAI_API_KEY);
 console.log("OPENAI_API_MODEL:", OPENAI_API_MODEL);
@@ -244,6 +245,10 @@ function createReviewComment(owner, repo, pull_number, comments) {
 function main() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
+        if (REVIEW_ENABLED === "false") {
+            console.log("Review is disabled");
+            return;
+        }
         const prDetails = yield getPRDetails();
         console.log("PR Details:", prDetails);
         let diff;
